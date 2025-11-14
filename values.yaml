@@ -1,0 +1,50 @@
+# Grafana configuration with Prometheus datasource
+# Use with: helm install grafana grafana/grafana -f values.yaml
+# Override Prometheus URL: helm install grafana grafana/grafana -f values.yaml --set env[0].value="http://your-prometheus:9090"
+
+image:
+  repository: grafana/grafana
+  tag: latest
+
+# Environment variables for the Grafana container
+# Override via: --set env[0].value="http://your-prometheus:9090"
+env:
+  - name: PROMETHEUS_URL
+    value: "http://prometheus-server.observability.svc.cluster.local"
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: $PROMETHEUS_URL
+        access: proxy
+        isDefault: true
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: default
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+
+dashboards:
+  default:
+    overview:
+      file: dashboards/overview.json
+    jvm:
+      file: dashboards/jvm.json
+
+persistence:
+  enabled: true
+  size: 5Gi
+
+adminUser: admin
+adminPassword: changeme
