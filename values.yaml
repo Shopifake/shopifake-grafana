@@ -46,5 +46,10 @@ persistence:
   enabled: true
   size: 5Gi
 
+# Admin credentials
+# IMPORTANT: Change these values at deployment time with:
+# helm install grafana grafana/grafana -f values.yaml \
+#   --set-string adminPassword="your-secure-password" \
+#   -n observability
 adminUser: admin
-adminPassword: changeme
+adminPassword: "changeme"
